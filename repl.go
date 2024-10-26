@@ -5,12 +5,20 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/MichaelBo1/repldex/internal/pokeapi"
 )
+
+type cliConfig struct {
+	api              pokeapi.Client
+	nextLocationsURL *string
+	prevLocationsURL *string
+}
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*cliConfig) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -25,10 +33,15 @@ func getCommands() map[string]cliCommand {
 			description: "Exit the Pokedex",
 			callback:    commandExit,
 		},
+		"map": {
+			name:        "map",
+			description: "List locations",
+			callback:    commandMap,
+		},
 	}
 }
 
-func startRepl() {
+func startRepl(conf *cliConfig) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -48,7 +61,7 @@ func startRepl() {
 			continue
 		}
 
-		err := cmd.callback()
+		err := cmd.callback(conf)
 		if err != nil {
 			fmt.Println(err)
 		}

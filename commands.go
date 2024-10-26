@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func commandHelp() error {
+func commandHelp(conf *cliConfig) error {
 	fmt.Println()
 	fmt.Println("Welcome!")
 	fmt.Println("Usage:")
@@ -17,7 +17,23 @@ func commandHelp() error {
 	return nil
 }
 
-func commandExit() error {
+func commandExit(conf *cliConfig) error {
 	os.Exit(0)
+	return nil
+}
+
+func commandMap(conf *cliConfig) error {
+	res, err := conf.api.ListLocations(conf.nextLocationsURL)
+	if err != nil {
+		return err
+	}
+
+	conf.nextLocationsURL = res.Next
+	conf.prevLocationsURL = res.Previous
+
+	for _, location := range res.Results {
+		fmt.Println(location.Name)
+	}
+
 	return nil
 }
