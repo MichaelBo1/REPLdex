@@ -7,7 +7,10 @@ import (
 )
 
 func main() {
-	pokeapiClient := pokeapi.NewClient(5 * time.Second)
+	clientTimeout := 5 * time.Second
+	purgeInterval := 10 * time.Second
+	pokeapiClient := pokeapi.NewClient(clientTimeout, purgeInterval)
+
 	conf := &cliConfig{
 		api: pokeapiClient,
 	}

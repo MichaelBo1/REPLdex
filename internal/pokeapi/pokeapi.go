@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/MichaelBo1/repldex/internal/pokecache"
 )
 
 const (
@@ -13,13 +15,15 @@ const (
 
 type Client struct {
 	httpClient http.Client
+	cache      pokecache.Cache
 }
 
-func NewClient(timeout time.Duration) Client {
+func NewClient(timeout time.Duration, purgeInterval time.Duration) Client {
 	return Client{
 		httpClient: http.Client{
 			Timeout: timeout,
 		},
+		cache: pokecache.NewCache(purgeInterval),
 	}
 }
 
@@ -39,6 +43,18 @@ func (c *Client) ListLocations(pageURL *string) (*ShallowLocationAreas, error) {
 		url = *pageURL
 	}
 
+	// Try get cached response
+	if val, ok := c.cache.Get(url); ok {
+		// fmt.Printf("Using cache for URL: %s", url)
+		locationsResponse := ShallowLocationAreas{}
+		err := json.Unmarshal(val, &locationsResponse)
+		if err != nil {
+			return nil, err
+		}
+
+		return &locationsResponse, nil
+	}
+
 	res, err := c.httpClient.Get(url)
 	if err != nil {
 		return nil, err
@@ -55,5 +71,7 @@ func (c *Client) ListLocations(pageURL *string) (*ShallowLocationAreas, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	c.cache.Add(url, data)
 	return &locationsResponse, nil
 }
