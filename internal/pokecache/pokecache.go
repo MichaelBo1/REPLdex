@@ -1,7 +1,6 @@
 package pokecache
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
@@ -28,7 +27,7 @@ func NewCache(interval time.Duration) Cache {
 }
 
 func (c *Cache) Add(key string, value []byte) {
-	fmt.Printf("Adding key: %s", key)
+	// fmt.Printf("Adding key: %s", key)
 	c.mu.Lock()
 	c.cache[key] = cacheElement{
 		created: time.Now().UTC(),
@@ -38,7 +37,7 @@ func (c *Cache) Add(key string, value []byte) {
 }
 
 func (c *Cache) Get(key string) ([]byte, bool) {
-	fmt.Printf("Getting key: %s", key)
+	// fmt.Printf("Getting key: %s", key)
 	c.mu.Lock()
 	elem, exists := c.cache[key]
 	c.mu.Unlock()

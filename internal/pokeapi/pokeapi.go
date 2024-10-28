@@ -13,27 +13,12 @@ const (
 	baseUrl = "https://pokeapi.co/api/v2"
 )
 
-type Client struct {
-	httpClient http.Client
-	cache      pokecache.Cache
-}
-
 func NewClient(timeout time.Duration, purgeInterval time.Duration) Client {
 	return Client{
 		httpClient: http.Client{
 			Timeout: timeout,
 		},
 		cache: pokecache.NewCache(purgeInterval),
-	}
-}
-
-type ShallowLocationAreas struct {
-	Count    int
-	Next     *string
-	Previous *string
-	Results  []struct {
-		Name string
-		URL  string
 	}
 }
 
@@ -74,4 +59,38 @@ func (c *Client) ListLocations(pageURL *string) (*ShallowLocationAreas, error) {
 
 	c.cache.Add(url, data)
 	return &locationsResponse, nil
+}
+
+func (c *Client) GetLocation(location string) (*Location, error) {
+	url := baseUrl + "/location-area/" + location
+
+	if val, ok := c.cache.Get(url); ok {
+		locationResponse := Location{}
+		err := json.Unmarshal(val, &locationResponse)
+		if err != nil {
+			return nil, err
+		}
+
+		return &locationResponse, nil
+	}
+
+	res, err := c.httpClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	locationResponse := Location{}
+	err = json.Unmarshal(data, &locationResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	c.cache.Add(url, data)
+	return &locationResponse, nil
 }

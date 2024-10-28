@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func commandHelp(conf *cliConfig) error {
+func commandHelp(conf *cliConfig, args ...string) error {
 	fmt.Println()
 	fmt.Println("Welcome!")
 	fmt.Println("Usage:")
@@ -18,12 +18,12 @@ func commandHelp(conf *cliConfig) error {
 	return nil
 }
 
-func commandExit(conf *cliConfig) error {
+func commandExit(conf *cliConfig, args ...string) error {
 	os.Exit(0)
 	return nil
 }
 
-func commandMap(conf *cliConfig) error {
+func commandMap(conf *cliConfig, args ...string) error {
 	res, err := conf.api.ListLocations(conf.nextLocationsURL)
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func commandMap(conf *cliConfig) error {
 	return nil
 }
 
-func commandMapB(conf *cliConfig) error {
+func commandMapB(conf *cliConfig, args ...string) error {
 	if conf.prevLocationsURL == nil {
 		return errors.New("you're on the first page")
 	}
@@ -54,6 +54,26 @@ func commandMapB(conf *cliConfig) error {
 
 	for _, location := range res.Results {
 		fmt.Println(location.Name)
+	}
+
+	return nil
+}
+
+func commandExplore(conf *cliConfig, args ...string) error {
+	if len(args) != 1 {
+		return errors.New("location name must be provided")
+	}
+	location := args[0]
+
+	res, err := conf.api.GetLocation(location)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Exploring %s...\n", location)
+	fmt.Println("Pokemon:")
+	for _, enc := range res.PokemonEncounters {
+		fmt.Printf(" - %s\n", enc.Pokemon.Name)
 	}
 
 	return nil
