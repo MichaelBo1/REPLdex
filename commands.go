@@ -78,3 +78,17 @@ func commandExplore(conf *cliConfig, args ...string) error {
 
 	return nil
 }
+
+func commandCatch(conf *cliConfig, args ...string) error {
+	if len(args) != 1 {
+		return errors.New("pokemon name must be provided")
+	}
+	pokemon := args[0]
+	res, err := conf.api.GetPokemon(pokemon)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(res.Name)
+	return nil
+}
