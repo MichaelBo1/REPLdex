@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
 )
 
@@ -84,11 +85,22 @@ func commandCatch(conf *cliConfig, args ...string) error {
 		return errors.New("pokemon name must be provided")
 	}
 	pokemon := args[0]
+
 	res, err := conf.api.GetPokemon(pokemon)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(res.Name)
+	fmt.Printf("Throwing a pokeball at %s...\n", pokemon)
+	rate := rand.Intn(res.BaseExperience)
+
+	if rate > 40 {
+		fmt.Printf("%s escaped!\n", pokemon)
+		return nil
+	}
+
+	fmt.Printf("%s was caught!\n", res.Name)
+	conf.pokedex[pokemon] = *res
+
 	return nil
 }
