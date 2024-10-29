@@ -104,3 +104,25 @@ func commandCatch(conf *cliConfig, args ...string) error {
 
 	return nil
 }
+
+func commandInspect(conf *cliConfig, args ...string) error {
+	if len(args) != 1 {
+		return errors.New("pokemon name must be provided")
+	}
+	name := args[0]
+
+	pokemon, exists := conf.pokedex[name]
+	if !exists {
+		return errors.New("you have not caught this pokemon before")
+	}
+
+	fmt.Printf("Name: %s\n", pokemon.Name)
+	fmt.Printf("Height: %v\n", pokemon.Height)
+	fmt.Printf("Weight: %v\n", pokemon.Weight)
+
+	fmt.Println("Stats:")
+	for _, stat := range pokemon.Stats {
+		fmt.Printf(" -%s: %v\n", stat.Stat.Name, stat.BaseStat)
+	}
+	return nil
+}

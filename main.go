@@ -12,7 +12,8 @@ func main() {
 	pokeapiClient := pokeapi.NewClient(clientTimeout, purgeInterval)
 
 	conf := &cliConfig{
-		api: pokeapiClient,
+		api:     pokeapiClient,
+		pokedex: make(map[string]pokeapi.Pokemon),
 	}
 
 	startRepl(conf)
