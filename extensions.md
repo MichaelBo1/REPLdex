@@ -1,0 +1,10 @@
+- [ ] Update the CLI to support the "up" arrow to cycle through previous commands
+- [ ] Simulate battles between Pokémon
+- [ ] Add more unit tests
+- [ ] Refactor your code to organize it better and make it more testable
+- [ ] Keep Pokémon in a "party" and allow them to level up
+- [ ] Allow for Pokémon that are caught to evolve after a set amount of time
+- [ ] Persist a user's Pokédex to disk so they can save progress between sessions
+- [ ] Use the PokeAPI to make exploration more interesting (e.g., give choices of areas like "left" or "right" instead of typing names)
+- [ ] Random encounters with wild Pokémon
+- [ ] Add support for different types of balls (Poké Balls, Great Balls, Ultra Balls, etc.), each with different chances of catching Pokémon
