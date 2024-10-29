@@ -125,4 +125,13 @@ func commandInspect(conf *cliConfig, args ...string) error {
 		fmt.Printf(" -%s: %v\n", stat.Stat.Name, stat.BaseStat)
 	}
 	return nil
+
+}
+
+func commandPokedex(conf *cliConfig, args ...string) error {
+	fmt.Println("Your Pokedex:")
+	for k := range conf.pokedex {
+		fmt.Printf(" - %s\n", k)
+	}
+	return nil
 }
